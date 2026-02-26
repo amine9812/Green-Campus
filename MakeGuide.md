@@ -130,6 +130,141 @@ Why both options matter:
 - Separate runs are faster during day-to-day coding and troubleshooting.
 
 ## Repo Structure (JSON)
+```json
+repo-root/
+├─ .git/ (Git metadata/history; not application source)
+├─ .vscode/ (Editor workspace settings; optional)
+├─ backend/
+│  ├─ src/
+│  │  └─ main/
+│  │     ├─ java/
+│  │     │  └─ com/
+│  │     │     └─ greencampus/
+│  │     │        ├─ config/
+│  │     │        │  ├─ DataSeeder.java (13244B) — Seeds demo rooms/assets/tickets/sessions/users for instant dev usability.
+│  │     │        │  └─ WebConfig.java (874B) — Web config (CORS + frontend/backend communication settings).
+│  │     │        ├─ controller/
+│  │     │        │  ├─ AbsenceController.java (3617B) — Absence endpoints (HTTP → JSON).
+│  │     │        │  ├─ AssetController.java (1317B) — Asset endpoints (HTTP → JSON).
+│  │     │        │  ├─ AuditLogController.java (1581B) — Audit log endpoints (HTTP → JSON).
+│  │     │        │  ├─ AuthController.java (2730B) — Login + /me endpoints (HTTP → JSON).
+│  │     │        │  ├─ HealthController.java (518B) — Health endpoint for backend status checks.
+│  │     │        │  ├─ RoomController.java (5173B) — Room list/search/detail + room management endpoints.
+│  │     │        │  ├─ SessionController.java (4098B) — Schedule/session endpoints + import tooling endpoints.
+│  │     │        │  ├─ StatsController.java (1547B) — KPI/statistics endpoints for dashboard overview cards.
+│  │     │        │  └─ TicketController.java (4212B) — Ticket endpoints (create/update/delete + status workflows).
+│  │     │        ├─ dto/
+│  │     │        │  ├─ AbsenceDTO.java (507B) — API payload shape for absences.
+│  │     │        │  ├─ AssetDTO.java (371B) — API payload shape for assets.
+│  │     │        │  ├─ AssetStatusUpdateDTO.java (230B) — API payload shape for asset status updates.
+│  │     │        │  ├─ FreeRoomDTO.java (267B) — API payload for free-room suggestions.
+│  │     │        │  ├─ RoomCreateDTO.java (602B) — API payload for creating rooms.
+│  │     │        │  ├─ RoomDetailDTO.java (864B) — API payload for room detail view (layout uses this).
+│  │     │        │  ├─ RoomListDTO.java (818B) — API payload for room list cards/table.
+│  │     │        │  ├─ SessionDTO.java (443B) — API payload for sessions.
+│  │     │        │  ├─ TicketCreateDTO.java (316B) — API payload for creating tickets.
+│  │     │        │  └─ TicketDTO.java (549B) — API payload for ticket list/detail.
+│  │     │        ├─ model/
+│  │     │        │  ├─ enums/
+│  │     │        │  │  ├─ AssetStatus.java (86B) — Allowed asset statuses.
+│  │     │        │  │  ├─ AssetType.java (100B) — Allowed asset types (PROJECTOR/TEACHER_PC/TABLE_PC, etc.).
+│  │     │        │  │  ├─ DayOfWeekEnum.java (135B) — Day-of-week enum used by scheduling.
+│  │     │        │  │  ├─ RoomStatus.java (82B) — Allowed room statuses (OPEN/CLOSED, etc.).
+│  │     │        │  │  ├─ RoomType.java (85B) — Room types (CLASSROOM/LAB/AMPHI).
+│  │     │        │  │  ├─ TicketPriority.java (84B) — Ticket priorities (P1/P2/P3).
+│  │     │        │  │  ├─ TicketStatus.java (99B) — Ticket workflow statuses.
+│  │     │        │  │  └─ UserRole.java (92B) — User roles (ADMIN/TECHNICIAN/STAFF).
+│  │     │        │  ├─ Absence.java (936B) — JPA entity for teacher absences.
+│  │     │        │  ├─ Asset.java (847B) — JPA entity for room equipment/assets.
+│  │     │        │  ├─ AuditLog.java (1805B) — JPA entity for audit log records.
+│  │     │        │  ├─ Room.java (1024B) — JPA entity for rooms.
+│  │     │        │  ├─ Session.java (896B) — JPA entity for scheduled sessions.
+│  │     │        │  ├─ Ticket.java (1262B) — JPA entity for tickets.
+│  │     │        │  └─ User.java (621B) — JPA entity for users.
+│  │     │        ├─ repository/
+│  │     │        │  ├─ AbsenceRepository.java (490B) — DB access layer for absences.
+│  │     │        │  ├─ AssetRepository.java (629B) — DB access layer for assets.
+│  │     │        │  ├─ AuditLogRepository.java (297B) — DB access layer for audit logs.
+│  │     │        │  ├─ RoomRepository.java (997B) — DB access layer for rooms.
+│  │     │        │  ├─ SessionRepository.java (1241B) — DB access layer for sessions.
+│  │     │        │  ├─ TicketRepository.java (1200B) — DB access layer for tickets.
+│  │     │        │  └─ UserRepository.java (285B) — DB access layer for users.
+│  │     │        ├─ security/
+│  │     │        │  ├─ AuthContext.java (613B) — Builds authenticated user context from Authorization header.
+│  │     │        │  ├─ AuthenticatedUser.java (149B) — Minimal authenticated user record (username + role).
+│  │     │        │  └─ JwtUtil.java (4356B) — JWT create/validate + claim extraction (username/role).
+│  │     │        ├─ service/
+│  │     │        │  ├─ AbsenceService.java (4652B) — Business rules for absences and free-room effects.
+│  │     │        │  ├─ AuditLogService.java (2220B) — Business rules for writing/reading audit logs.
+│  │     │        │  ├─ RoomService.java (13737B) — Core room logic (detail, health score, assets aggregation).
+│  │     │        │  ├─ SessionService.java (4978B) — Scheduling/session logic + imports/queries.
+│  │     │        │  └─ TicketService.java (3039B) — Ticket workflow logic (create/update/status rules).
+│  │     │        └─ GreenCampusApplication.java (328B) — Spring Boot entry point.
+│  │     └─ resources/
+│  │        ├─ db/
+│  │        │  └─ migration/
+│  │        │     ├─ V1__init.sql (127B) — Initializes base schema foundation.
+│  │        │     ├─ V2__rooms_and_assets.sql (942B) — Creates rooms + assets tables.
+│  │        │     ├─ V3__tickets.sql (595B) — Creates tickets tables.
+│  │        │     ├─ V4__sessions.sql (517B) — Creates sessions/schedule tables.
+│  │        │     ├─ V5__absences.sql (518B) — Creates absences tables.
+│  │        │     ├─ V6__users.sql (251B) — Creates users/auth tables.
+│  │        │     ├─ V7__audit_log.sql (306B) — Creates initial audit log table.
+│  │        │     └─ V8__audit_log_rich_fields.sql (613B) — Extends audit log schema with richer fields.
+│  │        ├─ application-dev.yml (476B) — Dev config (H2 in-memory DB).
+│  │        └─ application.yml (582B) — Default config (PostgreSQL-style env + Flyway + JPA).
+│  ├─ target/ (Build artifacts; generated, not source)
+│  ├─ .gitignore (27B) — Git ignore rules for backend.
+│  ├─ Dockerfile (351B) — Backend container build recipe.
+│  ├─ mvnw (10069B) — Maven wrapper script.
+│  └─ pom.xml (3096B) — Maven build config + dependencies (Spring/JPA/Flyway/Postgres).
+├─ docs/
+│  └─ README.md (166B) — Supplemental docs/notes (overview, startup steps, demo credentials).
+├─ frontend/
+│  ├─ dist/ (Frontend production build output; generated)
+│  ├─ node_modules/ (Installed dependencies; generated)
+│  ├─ src/
+│  │  ├─ api/
+│  │  │  └─ client.ts (5579B) — Axios client + typed API helpers (rooms/tickets/sessions/auth/admin).
+│  │  ├─ components/
+│  │  │  ├─ AddRoomModal.tsx (9563B) — Admin modal for creating/editing rooms.
+│  │  │  ├─ AuthGuard.tsx (247B) — Route guard: requires auth token.
+│  │  │  ├─ RoleGuard.tsx (568B) — Route guard: blocks unauthorized roles from admin/schedule routes.
+│  │  │  ├─ RoomDetailErrorBoundary.tsx (2101B) — Prevents room detail crashes from becoming a white screen.
+│  │  │  └─ RoomLayout.tsx (6849B) — Visual top-down room layout (tables + PCs + projector + teacher PC).
+│  │  ├─ layouts/
+│  │  │  └─ DashboardLayout.tsx (7386B) — Main shell (sidebar/topbar/toasts/health indicator).
+│  │  ├─ lib/
+│  │  │  ├─ auth.ts (1106B) — Local auth helpers (token + current user storage).
+│  │  │  └─ permissions.ts (1057B) — Central role permission checks for UI visibility/actions.
+│  │  ├─ pages/
+│  │  │  ├─ AdminPage.tsx (16256B) — Admin tools screen + audit log viewer.
+│  │  │  ├─ LoginPage.tsx (5372B) — Login screen.
+│  │  │  ├─ OverviewPage.tsx (5244B) — Overview dashboard KPIs.
+│  │  │  ├─ RoomDetailPage.tsx (15546B) — Room detail view (feeds layout + assets + tickets).
+│  │  │  ├─ RoomsPage.tsx (13459B) — Rooms list with search/filter.
+│  │  │  ├─ SchedulePage.tsx (22911B) — Schedule import/view + absences/free-room suggestions (admin-guarded).
+│  │  │  └─ TicketsPage.tsx (17665B) — Ticket list + status actions + role-based controls.
+│  │  ├─ types/
+│  │  │  ├─ audit.ts (316B) — Types for audit log entries.
+│  │  │  ├─ auth.ts (266B) — Auth-related types.
+│  │  │  └─ room.ts (2652B) — Core domain types for rooms/assets/tickets/sessions/absences.
+│  │  ├─ App.tsx (2002B) — Top-level route map (login + dashboard pages + guards).
+│  │  ├─ index.css (1712B) — Global styles + Tailwind theme tokens.
+│  │  ├─ main.tsx (663B) — React bootstrap + router + TanStack Query provider setup.
+│  │  └─ vite-env.d.ts (38B) — Vite type declarations.
+│  ├─ .gitignore (25B) — Git ignore rules for frontend.
+│  ├─ Dockerfile (136B) — Frontend container build recipe.
+│  ├─ index.html (765B) — Frontend HTML entry.
+│  ├─ package-lock.json (206803B) — Locked dependency tree for reproducible installs.
+│  ├─ package.json (1538B) — Scripts + dependencies.
+│  ├─ postcss.config.js (92B) — PostCSS config for Tailwind build.
+│  ├─ tailwind.config.js (836B) — Tailwind theme configuration.
+│  ├─ tsconfig.app.json (751B) — TS config (app).
+│  ├─ tsconfig.json (751B) — TS config (root).
+│  └─ vite.config.ts (445B) — Vite dev/build config + API proxy behavior.
+├─ docker-compose.yml (1530B) — Full local stack (PostgreSQL + backend + frontend).
+└─ README.md (4328B) — Main project overview + run steps + credentials.
 
 ```json
 {
